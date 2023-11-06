@@ -1,0 +1,53 @@
+#root {
+	height: 100vh;
+	height: 100dvh;
+}
+
+.app-wrapper {
+	background-color: #0896cd;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.8rem 1.5rem;
+	// position: relative;
+
+	.upper {
+		width: 100%;
+		flex-grow: 1;
+		display: flex;
+		position: relative;
+
+		.info-board {
+			position: absolute;
+			left: 0;
+			display: block;
+			width: 20%;
+			max-height: 97%;
+			overflow: scroll;
+			color: white;
+			padding-top: 0.5rem;
+			padding-bottom: 3rem;
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			h4 {
+				text-transform: uppercase;
+				margin-bottom: 0.5rem;
+			}
+
+			p {
+				font-size: 0.8rem;
+			}
+		}
+
+		.creature-panel {
+			position: absolute;
+			right: 0;
+			width: 80%;
+			height: 100%;
+		}
+	}
+}

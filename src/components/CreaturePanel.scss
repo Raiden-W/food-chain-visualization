@@ -1,0 +1,19 @@
+text {
+	font: bold 0.8rem sans-serif;
+	fill-opacity: 0.8;
+	fill: white;
+	text-transform: capitalize;
+	&.large {
+		font-size: 1rem;
+	}
+}
+
+line {
+	stroke-opacity: 0.8;
+}
+
+image {
+	&.show-info {
+		filter: drop-shadow(0 0 5px rgb(255, 255, 255));
+	}
+}

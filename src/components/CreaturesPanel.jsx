@@ -1,4 +1,3 @@
-// import { Html, OrthographicCamera } from "@react-three/drei";
 import * as d3 from "d3";
 import forceBoundary from "d3-force-boundary";
 import { useEffect, useRef } from "react";

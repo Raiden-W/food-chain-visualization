@@ -1,4 +1,3 @@
-import { Canvas } from "@react-three/fiber";
 import { useState } from "react";
 import CreaturesPanel from "./components/CreaturesPanel";
 import CreaturesBar from "./components/CreaturesBar";

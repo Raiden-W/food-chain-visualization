@@ -21,6 +21,8 @@ export default function CreaturesPanel({
 		const links = [];
 		const nodes = [];
 
+		//we wanna know all species related to our selected creatures
+		//find preys and put them in data nodes and links
 		creaturesData.forEach((creaData) => {
 			if (selectedCreatures.includes(creaData.species)) {
 				nodes.push({ species: creaData.species });
@@ -31,6 +33,7 @@ export default function CreaturesPanel({
 			}
 		});
 
+		//find predators and put them in data nodes and links
 		creaturesData.forEach((creaData) => {
 			selectedCreatures.forEach((selectedCrea) => {
 				if (creaData.preys.includes(selectedCrea)) {
@@ -62,6 +65,7 @@ export default function CreaturesPanel({
 			return bool;
 		});
 
+		//populate links array for D3
 		linksRef.current = uniqLinks;
 
 		const temNodes = [];
@@ -79,8 +83,9 @@ export default function CreaturesPanel({
 			return bool;
 		});
 
-		//populate info for nodes
+		//populate nodes array for D3
 		nodesRef.current = uniqNodes.map((node) => {
+			//we wanna know the each type of all species in the panel
 			let type;
 			for (let i = 0; i < creaturesData.length; i++) {
 				if (node.species === creaturesData[i].species) {
@@ -88,6 +93,7 @@ export default function CreaturesPanel({
 					break;
 				}
 			}
+			//according to type we give a x pos that the species image tends to locate in panel
 			let posX;
 			switch (type) {
 				case "apex":
@@ -117,9 +123,10 @@ export default function CreaturesPanel({
 			return { species: node.species, radius, imgUrl, posX };
 		});
 
+		//binding and unbinding data in D3
 		const panel = d3.select(panelRef.current);
 		linesRef.current = panel
-			.selectAll("line")
+			.selectAll("line") //draw lines accroding to links
 			.data(linksRef.current)
 			.join(
 				(enter) =>
@@ -153,7 +160,7 @@ export default function CreaturesPanel({
 			);
 
 		textsRef.current = panel
-			.selectAll("text")
+			.selectAll("text") //draw texts of all species in panel
 			.data(nodesRef.current, (node) => node.species)
 			.join(
 				(enter) =>
@@ -162,7 +169,7 @@ export default function CreaturesPanel({
 						.attr("fill", "black")
 						.attr("text-anchor", "middle")
 						.attr("alignment-baseline", "hanging")
-						.classed("large", (node) => node.radius > baseRadius)
+						.classed("large", (node) => node.radius > baseRadius) //conditional class, font-size
 						.text((node) => node.species),
 				(update) =>
 					update
@@ -173,14 +180,14 @@ export default function CreaturesPanel({
 			);
 
 		creaImgsRef.current = panel
-			.selectAll("image")
+			.selectAll("image") //draw images of all species in panel
 			.data(nodesRef.current, (node) => node.species)
 			.join(
 				(enter) =>
 					enter
 						.append("image")
 						.attr("href", (node) => node.imgUrl)
-						.attr("height", (node) => node.radius * 2)
+						.attr("height", (node) => node.radius * 2) //use radius property in image size
 						.attr("width", (node) => node.radius * 2),
 				(update) =>
 					update
@@ -192,6 +199,7 @@ export default function CreaturesPanel({
 		creaImgsRef.current.raise();
 		textsRef.current.raise();
 
+		//force simulation setting
 		simulationRef.current = d3
 			.forceSimulation(nodesRef.current)
 			.force(
@@ -209,7 +217,7 @@ export default function CreaturesPanel({
 				"x",
 				d3
 					.forceX()
-					.strength(0.5)
+					.strength(0.6)
 					.x((node) => {
 						return node.posX * getPanelBox().w;
 					})
@@ -224,26 +232,27 @@ export default function CreaturesPanel({
 			.force("center", d3.forceCenter(getPanelBox().w / 2, getPanelBox().h / 2))
 			.alphaDecay(0.1);
 
+		//force simulation running and updating
 		simulationRef.current.on("tick", () => {
 			linesRef.current
-				.attr("x1", (link) => link.source.x)
+				.attr("x1", (link) => link.source.x) //upding link-lines position
 				.attr("y1", (link) => link.source.y)
 				.attr("x2", (link) => link.target.x)
 				.attr("y2", (link) => link.target.y);
 
 			creaImgsRef.current
-				.attr("x", (node) => node.x - node.radius)
+				.attr("x", (node) => node.x - node.radius) //upding creature images position
 				.attr("y", (node) => node.y - node.radius);
 
 			textsRef.current
-				.attr("x", (node) => node.x)
+				.attr("x", (node) => node.x) //upding text position
 				.attr("y", (node) => node.y + node.radius * 0.65);
 		});
 
+		//click one creature image in the panel to set the highlight creature to show info in info board
 		creaImgsRef.current.on("click", (e, node) => {
 			creaImgsRef.current.attr("class", null);
 			e.target.classList.add("show-info");
-			console.log("click");
 			setForInfo(node.species);
 		});
 	}, [selectedCreatures]);
@@ -256,6 +265,7 @@ export default function CreaturesPanel({
 	};
 
 	useEffect(() => {
+		//initial creature hightlight in panel
 		creaImgsRef.current.classed(
 			"show-info",
 			(node) => node.species === "jaguar"
@@ -279,7 +289,7 @@ export default function CreaturesPanel({
 			<defs>
 				<marker
 					id="arrowL"
-					fill="white"
+					fill="yellow"
 					viewBox="0 0 10 10"
 					refX="70"
 					refY="5"
@@ -292,7 +302,7 @@ export default function CreaturesPanel({
 				<marker
 					id="arrowS"
 					fill="white"
-					viewBox="0 0 10 10"
+					viewBox="0 0 15 15"
 					refX="70"
 					refY="5"
 					markerWidth="200"
